@@ -28,4 +28,4 @@ before_install:
 
 script:
     - ./build-image.sh
-    - docker images | grep cyberdojo/${PWD##*/}
+    - docker images | grep cyberdojo/nginx
