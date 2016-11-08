@@ -1,4 +1,4 @@
-FROM nginx:1.9
+FROM nginx:1.11.5
 MAINTAINER Jon Jagger <jon@jaggersoft.com>
 
 ARG NGINX_DIR=/usr/share/nginx/html
