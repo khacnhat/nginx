@@ -8,5 +8,4 @@ before_script:
     - chmod +x push_and_trigger.sh
 
 script:
-    - docker-compose build
-    - ./push_and_trigger.sh cyber-dojo/system-tests
+    - docker-compose build && ./push_and_trigger.sh cyber-dojo/system-tests
