@@ -1,5 +1,5 @@
-FROM nginx:1.11.5
-MAINTAINER Jon Jagger <jon@jaggersoft.com>
+FROM  nginx:1.11.5
+LABEL maintainer=jon@jaggersoft.com
 
 ARG NGINX_DIR=/usr/share/nginx/html
 
