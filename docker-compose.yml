@@ -6,3 +6,5 @@ services:
     image: cyberdojo/nginx
     build:
       context: .
+      args:
+        - SHA=${SHA}

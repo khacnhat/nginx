@@ -8,3 +8,10 @@ COPY     images ${NGINX_DIR}/images
 RUN chmod -R +r ${NGINX_DIR}
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# - - - - - - - - - - - - - - - - -
+# git commit sha image is built from
+# - - - - - - - - - - - - - - - - -
+
+ARG SHA
+RUN echo ${SHA} > ${NGINX_DIR}/sha.txt
