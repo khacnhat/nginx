@@ -9,9 +9,6 @@ jobs:
     working_directory: ~/repo
 
     steps:
-      - run: |
-         docker login -u $DOCKER_USER -p $DOCKER_PASS
-
       - checkout
 
       # starts a remote docker environment to run docker commands
@@ -20,6 +17,7 @@ jobs:
       - run:
           name: build Geoserver docker image and push image to docker hub
           command: |
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
             docker build -t cyberdojo/nginx:$(git rev-parse --short=7 HEAD) .
             docker push cyberdojo/nginx:$(git rev-parse --short=7 HEAD)
 
