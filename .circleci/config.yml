@@ -25,7 +25,7 @@ jobs:
       - image: lfaoro/gcloud-kubectl-helm
     steps:
       - run:
-          name: authenticate with gcloud
+          name: authenticate with gcloud and deploy with helm
           environment:
             SERVICE_ACCOUNT: cyber-dojo-circleci-deploy@cyber-dojo-praqma.iam.gserviceaccount.com
             KEYFILE: gcp-credentials.json
@@ -34,12 +34,10 @@ jobs:
             PROJECT: cyber-dojo-praqma
           command: |
             echo $GCP_K8S_CREDENTIALS > /gcp/gcp-credentials.json
-            ./authenticate.bash
-      - run:
-          name: deploy with helm
-          command: |
+            ../authenticate.bash
             helm repo add praqma https://praqma-helm-repo.s3.amazonaws.com/
             helm upgrade --install --namespace=beta —set image.nginx.tag=${CIRCLE_SHA1:0:7} beta-cyber-dojo praqma/cyber-dojo
+
   # deploy-to-dev:
   #   docker:
   #     - image: praqma/helmsman:v1.3.0-helm-v2.8.1
