@@ -48,6 +48,7 @@ workflows:
   build-publish-deploy:
     jobs:
       - build-image:
+          context: cyberdojo-context
           filters:
             branches:
               only:
