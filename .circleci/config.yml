@@ -36,9 +36,9 @@ jobs:
             echo $GCP_K8S_CREDENTIALS > /gcp/gcp-credentials.json
             gcloud auth activate-service-account "$SERVICE_ACCOUNT" --key-file=/gcp/gcp-credentials.json
             gcloud container clusters get-credentials "$CLUSTER" --zone "$ZONE" --project "$PROJECT"
-            helm init
+            helm init --client-only
             helm repo add praqma https://praqma-helm-repo.s3.amazonaws.com/
-            helm upgrade --install --namespace=beta —set image.nginx.tag=${CIRCLE_SHA1:0:7} beta-cyber-dojo praqma/cyber-dojo
+            helm upgrade --install --namespace=beta --set image.nginx.tag=${CIRCLE_SHA1:0:7} beta-cyber-dojo praqma/cyber-dojo
 
   # deploy-to-dev:
   #   docker:
