@@ -34,7 +34,7 @@ jobs:
             gcloud container clusters get-credentials "$CLUSTER" --zone "$ZONE" --project "$PROJECT"
             helm init --client-only
             helm repo add praqma https://praqma-helm-repo.s3.amazonaws.com/
-            helm upgrade --install --namespace=beta --set image.nginx.tag=${CIRCLE_SHA1:0:7} beta-cyber-dojo praqma/cyber-dojo
+            helm upgrade --install --namespace=beta --reuse-values --set image.nginx.tag=${CIRCLE_SHA1:0:7} beta-cyber-dojo praqma/cyber-dojo
 
 workflows:
   version: 2
