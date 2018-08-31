@@ -1,8 +1,7 @@
 version: 2
 jobs:
   build-image:
-    steps:
-      - checkout
+
     docker:
       - image: google/cloud-sdk:latest
 
@@ -15,12 +14,32 @@ jobs:
       - setup_remote_docker
 
       - run:
-          name: build Geoserver docker image and push image to docker hub
+          name: build nginx docker image and push image to docker hub
           command: |
             docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker build -t cyberdojo/nginx:$(git rev-parse --short=7 HEAD) .
-            docker push cyberdojo/nginx:$(git rev-parse --short=7 HEAD)
+            docker build -t cyberdojo/nginx:${CIRCLE_SHA1:0:7} .
+            docker push cyberdojo/nginx:${CIRCLE_SHA1:0:7}
 
+  deploy-image-to-beta:
+    docker:
+      - image: lfaoro/gcloud-kubectl-helm
+    steps:
+      - run:
+          name: authenticate with gcloud
+          environment:
+            SERVICE_ACCOUNT: cyber-dojo-circleci-deploy@cyber-dojo-praqma.iam.gserviceaccount.com
+            KEYFILE: gcp-credentials.json
+            CLUSTER: test
+            ZONE: europe-west1-b
+            PROJECT: cyber-dojo-praqma
+          command: |
+            echo $GCP_K8S_CREDENTIALS > /gcp/gcp-credentials.json
+            ./authenticate.bash
+      - run:
+          name: deploy with helm
+          command: |
+            helm repo add praqma https://praqma-helm-repo.s3.amazonaws.com/
+            helm upgrade --install --namespace=beta —set image.nginx.tag=${CIRCLE_SHA1:0:7} beta-cyber-dojo praqma/cyber-dojo
   # deploy-to-dev:
   #   docker:
   #     - image: praqma/helmsman:v1.3.0-helm-v2.8.1
@@ -51,3 +70,6 @@ workflows:
             branches:
               only:
                 - master
+      - deploy-image-to-beta:
+          context: cyberdojo-context
+          requires: build-image
