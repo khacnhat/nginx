@@ -2,23 +2,20 @@ version: 2
 jobs:
   build-publish:
 
-    docker:
-      - image: google/cloud-sdk:latest
+    machine:
+      enabled: true
 
     working_directory: ~/repo
 
     steps:
       - checkout
-
-      # starts a remote docker environment to run docker commands
-      - setup_remote_docker
       - run:
           name: build image
           command: |
             set -ev
             ./pipe_build_up_test.sh
       - run:
-          name: push tagged image to dockerhub
+          name: publish tagged image to dockerhub
           command: |
             set -ev
             readonly project=${CIRCLE_PROJECT_REPONAME}
