@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build-image:
+  build-publish:
 
     docker:
       - image: google/cloud-sdk:latest
@@ -12,16 +12,29 @@ jobs:
 
       # starts a remote docker environment to run docker commands
       - setup_remote_docker
-
       - run:
-          name: build nginx docker image and push image to docker hub
+          name: build image
           command: |
-            set -e
-            docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker build -t cyberdojo/nginx:${CIRCLE_SHA1:0:7} .
-            docker push cyberdojo/nginx:${CIRCLE_SHA1:0:7}
-            docker tag cyberdojo/nginx:${CIRCLE_SHA1:0:7} cyberdojo/nginx:beta
-            docker push cyberdojo/nginx:beta
+            set -ev
+            ./pipe_build_up_test.sh
+      - run:
+          name: push tagged image to dockerhub
+          command: |
+            set -ev
+            readonly project=${CIRCLE_PROJECT_REPONAME}
+            docker tag  cyberdojo/${project}:latest cyberdojo/${project}:${CIRCLE_SHA1:0:7}
+            docker tag  cyberdojo/${project}:latest cyberdojo/${project}:beta
+            echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
+            docker push cyberdojo/${project}:${CIRCLE_SHA1:0:7}
+            docker push cyberdojo/${project}:beta
+            # old architecture
+            docker push cyberdojo/${project}:latest
+
+            #docker build -t cyberdojo/nginx:${CIRCLE_SHA1:0:7} .
+            #docker tag cyberdojo/nginx:${CIRCLE_SHA1:0:7} cyberdojo/nginx:beta
+            #docker login -u $DOCKER_USER -p $DOCKER_PASS
+            #docker push cyberdojo/nginx:${CIRCLE_SHA1:0:7}
+            #docker push cyberdojo/nginx:beta
 
   deploy-image-to-beta:
     docker:
@@ -42,7 +55,7 @@ workflows:
   version: 2
   build-publish-deploy:
     jobs:
-      - build-image:
+      - build-publish:
           context: cyberdojo-context
           filters:
             branches:
@@ -51,4 +64,4 @@ workflows:
       - deploy-image-to-beta:
           context: cyberdojo-context
           requires:
-            - build-image
+            - build-publish
