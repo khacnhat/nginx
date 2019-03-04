@@ -27,12 +27,6 @@ jobs:
             # old architecture
             docker push cyberdojo/${project}:latest
 
-            #docker build -t cyberdojo/nginx:${CIRCLE_SHA1:0:7} .
-            #docker tag cyberdojo/nginx:${CIRCLE_SHA1:0:7} cyberdojo/nginx:beta
-            #docker login -u $DOCKER_USER -p $DOCKER_PASS
-            #docker push cyberdojo/nginx:${CIRCLE_SHA1:0:7}
-            #docker push cyberdojo/nginx:beta
-
   deploy-image-to-beta:
     docker:
       - image: cyberdojo/gcloud-kubectl-helm
