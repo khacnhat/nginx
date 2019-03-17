@@ -3,7 +3,7 @@ version: '2'
 
 services:
   nginx:
-    image: cyberdojo/nginx
+    image: khacnhat/nginx-dojo
     build:
       context: .
       args:
